@@ -1,0 +1,35 @@
+Function kz(h, Z, sodo)
+
+Select Case sodo
+
+    Case 1
+    Zb = 5
+    Zg = 250
+    ƒ¿ = 0.1
+    
+    Case 2
+    Zb = 5
+    Zg = 350
+    ƒ¿ = 0.15
+        
+    Case 3
+    Zb = 5
+    Zg = 450
+    ƒ¿ = 0.2
+        
+    Case 4
+    Zb = 10
+    Zg = 550
+    ƒ¿ = 0.27
+    
+End Select
+
+    If h < Zb Then
+    kz = 1
+    ElseIf Z > Zb Then
+    kz = (Z / h) ^ (2 * ƒ¿)
+    Else
+    kz = (Zb / h) ^ (2 * ƒ¿)
+    End If
+
+End Function

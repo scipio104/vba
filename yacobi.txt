@@ -1,0 +1,449 @@
+Option Explicit
+
+Dim pi As Double
+Dim f As Single
+Dim A(50, 50) As Double
+Dim i As Single, j As Single, n As Single, z As Single, x As Double
+Dim f2 As Single, f3 As Single, f4 As Single
+
+Sub matrix()
+
+Dim t As Double
+
+
+Dim m(50) As Double, k(50) As Double
+Dim mm(50, 50) As Double, km(50, 50) As Double
+Dim p As Double
+Dim c As Double, y As Double
+Dim ff As Single
+
+pi = 3.141593
+
+f = Cells(2, 1)
+ff = 2 * f
+f2 = (2 + f) * 2
+f3 = (2 + f) * 3
+f4 = (2 + f) * 4
+
+For i = 1 To f
+Cells(1 + i, 2) = f - i + 1
+m(f + 1 - i) = Cells(1 + i, 3) * 1000
+k(f + 1 - i) = Cells(1 + i, 4) * 1000 * 1000
+
+
+Next
+
+'M matrixs
+For i = 1 To f
+    For j = 1 To f
+    If i = j Then
+    mm(i, j) = m(i) ^ -0.5
+    Else
+    mm(i, j) = 0
+    End If
+    Next
+Next
+'K matrix
+For i = 1 To f
+    For j = 1 To f
+        If i = j Then
+        km(i, j) = k(i) + k(i + 1)
+        ElseIf i = j + 1 Then
+        km(i, j) = -k(j + 1)
+        ElseIf i = j - 1 Then
+        km(i, j) = -k(j)
+        Else
+        km(i, j) = 0
+        End If
+    Next
+Next
+
+'M matrix output
+For i = 1 To f
+    For j = 1 To f
+    Cells(2 + f3 + i, 2 + j) = mm(i, j)
+    Next
+Next
+
+'K matrix output
+For i = 1 To f
+    For j = 1 To f
+    Cells(2 + f3 + i, 2 + f + 2 + j) = km(i, j)
+    Next
+Next
+
+
+'M*K
+For i = 1 To f
+    For j = 1 To f
+        t = 0#
+        For n = 1 To f
+            t = t + mm(i, n) * km(n, j)
+        Next n
+        A(i, j) = t
+    Next j
+Next
+'K*M
+For i = 1 To f
+    For j = 1 To f
+        t = 0#
+        For n = 1 To f
+            t = t + A(i, n) * mm(n, j)
+        Next n
+        A(i, j) = t
+    Next j
+Next
+' A output
+For i = 1 To f
+    For j = 1 To f
+    Cells(2 + f4 + i, 2 + j) = A(i, j)
+    Next
+Next
+
+End Sub
+
+Sub yacobi()
+Dim sr(50, 50) As Double
+Dim amax As Double
+Dim im As Long
+Dim jm As Long
+Dim q As Double
+Dim srt(50, 50) As Double
+Dim Ar(50, 50) As Double, Art(50, 50) As Double
+Dim srb(50, 50) As Double
+Dim s(50, 50) As Double
+Dim t As Double
+Dim c(50, 50) As Double
+Dim pi As Double
+Dim w(50) As Double
+Dim wi(50) As Double
+Dim Ti(50) As Double
+Dim m(50) As Double
+Dim bc(50) As Double
+Dim bm(50) As Double
+Dim bm1(50, 50) As Double
+Dim b(50) As Double
+Dim su(50, 50) As Double
+Dim su1(50, 50) As Double
+Dim u(50, 50) As Double, us(50, 50) As Double
+Dim u1(50) As Double
+Dim f5 As Single, f6 As Single, f7 As Single, f8 As Single
+Dim f9 As Single, f10 As Single
+Dim um(50) As Double
+Dim mu(50) As Double
+Dim m1(50) As Double, m2(50) As Double
+Dim b1(50) As Double, b2(50) As Double
+Dim ui(50, 50) As Double, bm2(50, 50) As Double
+Dim bsu(50, 50) As Double
+
+
+pi = 3.141593
+f = Cells(2, 1)
+
+For i = 1 To f
+    m(f + 1 - i) = Cells(1 + i, 3) * 1000
+Next
+For i = 1 To f
+    m1(i) = m(i) ^ -0.5
+    m2(i) = m(i) ^ 2
+Next
+f2 = (2 + f) * 2
+f3 = (2 + f) * 3
+f4 = (2 + f) * 4
+f5 = (2 + f) * 5
+f6 = (2 + f) * 6
+f7 = (2 + f) * 7
+f8 = (2 + f) * 8
+f9 = (2 + f) * 9
+f10 = (2 + f) * 10
+
+
+
+For i = 1 To f
+    For j = 1 To f
+    A(i, j) = Cells(2 + f4 + i, 2 + j)
+    Next
+Next
+
+'sis2  sr-1 初期設定
+
+For i = 1 To f
+    For j = 1 To f
+        If i = j Then
+            srb(i, j) = 1
+        Else
+            srb(i, j) = 0
+        End If
+    Next
+Next
+
+'③
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f7 + i, 2 + j).Value = srb(i, j)
+    Next
+Next
+
+For n = 1 To 10000
+    amax = 0#
+    For i = 1 To f - 1
+        For j = i + 1 To f
+            If Abs(A(i, j)) > amax Then
+                amax = Abs(A(i, j))
+                im = i
+                jm = j
+                Cells(2 + f6 + 5, 1) = im
+                Cells(2 + f6 + 6, 1) = jm
+            End If
+        Next
+    Next
+    
+'行列の最大値が０かを判定し，最大値が０のとき計算を終了する
+
+If amax < 0.000000001 Then Exit For
+'①
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f5 + i, 2 + j).Value = A(i, j)
+    Next
+Next
+
+           
+Cells(3 + f5, 1) = A(im, im)
+Cells(3 + f5, 2) = A(im, jm)
+Cells(3 + f5 + 1, 1) = A(jm, im)
+Cells(3 + f5 + 1, 2) = A(jm, jm)
+        
+q = Application.WorksheetFunction.Atan2(A(im, im) - A(jm, jm), A(im, jm) * 2) / 2
+'q = Atn2(A(im, im) - A(jm, jm), 2 * A(im, jm)) * 0.5
+
+Cells(3 + f5 + 4, 1) = q
+
+'sr行列の作成
+For i = 1 To f
+    For j = 1 To f
+        If i = j Then
+            sr(i, j) = 1
+        Else
+            sr(i, j) = 0
+        End If
+    Next
+Next
+
+sr(im, im) = Cos(q)
+sr(im, jm) = -Sin(q)
+sr(jm, im) = Sin(q)
+sr(jm, jm) = Cos(q)
+
+Cells(3 + f6, 1) = sr(im, im)
+Cells(3 + f6, 2) = sr(im, jm)
+Cells(3 + f6 + 1, 1) = sr(jm, im)
+Cells(3 + f6 + 1, 2) = sr(jm, jm)
+
+'④sr行列を出力
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f5 + i, 2 + j + f + 2) = sr(i, j)
+    Next
+Next
+
+'ｓ転置
+For i = 1 To f
+    For j = 1 To f
+        srt(i, j) = sr(j, i)
+    Next
+Next
+
+'s-*A
+For i = 1 To f
+    For j = 1 To f
+        t = 0#
+        For z = 1 To f
+            t = t + srt(i, z) * A(z, j)
+        Next z
+        c(i, j) = t
+    Next j
+Next
+'s-*A*s
+For i = 1 To f
+    For j = 1 To f
+        t = 0#
+        For z = 1 To f
+            t = t + c(i, z) * sr(z, j)
+        Next z
+        Ar(i, j) = t
+    Next j
+Next
+
+
+
+'⑤ｓ転置出力
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f6 + i, 2 + j + f + 2) = srt(i, j)
+    Next
+Next
+
+'②Ar出力
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f6 + i, 2 + j) = Ar(i, j)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        t = 0#
+        For z = 1 To f
+            t = t + srb(i, z) * sr(z, j)
+        Next z
+        s(i, j) = t
+    Next
+Next
+'⑥
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f7 + i, 2 + f + 2 + j) = s(i, j)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        srb(i, j) = s(i, j)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f7 + i, 2 + j).Value = srb(i, j)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        A(i, j) = Ar(i, j)
+    Next
+Next
+Next
+
+'ui 固有ベクトル　*m^-0.5
+For i = 1 To f
+    For j = 1 To f
+        u(i, j) = m1(i) * s(i, j)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f8 + i, 2 + f + 2 + j) = u(i, j)
+    Next
+Next
+
+For i = 1 To f
+    u1(i) = u(1, i)
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        us(j, i) = u(j, i) / u1(i)
+    Next
+Next
+
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f9 + i, 2 + f + 2 + j) = us(i, j)
+    Next
+Next
+
+'ui
+For i = 1 To f
+    For j = 1 To f
+        ui(i, j) = us(f + 1 - i, f + 1 - j)
+    Next j
+Next i
+
+For i = 1 To f
+    ui(f + 1, j) = 0
+Next i
+
+For i = 1 To f + 1
+    For j = 1 To f
+        Cells(2 + f + 9 + i, 2 + f + 2 + j) = ui(i, j)
+    Next
+Next
+
+'刺激係数
+For i = 1 To f
+    t = 0#
+        For j = 1 To f
+            t = t + m(j) * us(j, i) / 1000
+        Next
+    bc(i) = t
+Next
+
+For i = 1 To f
+    t = 0#
+        For j = 1 To f
+            t = t + m(j) * us(j, i) ^ 2 / 1000
+        Next
+    bm(i) = t
+Next
+
+For i = 1 To f
+    b1(i) = bc(i) / bm(i)
+Next
+For i = 1 To f
+    b(i) = b1(f + 1 - i)
+Next
+For i = 1 To f
+    Cells(2 + f + 7, 2 + i) = b(i)
+    Cells(2 + f + 7, 2) = "刺激係数"
+Next
+
+'b*u
+Dim bus(50, 50) As Double
+For i = 1 To f
+    For j = 1 To f
+        bus(j, i) = b(i) * ui(j, i)
+    Next
+Next
+For i = 1 To f
+    For j = 1 To f
+        Cells(2 + f + 9 + i, 2 + j) = bus(i, j)
+        Cells(2 + f + 9, 2) = "刺激係数*固有ベクトル"
+        Cells(2 + f + 9 + i, 2) = f + 1 - i
+    Next
+Next
+
+'固有周期
+Dim w1(50) As Single
+
+For i = 1 To f
+    w1(i) = A(i, i)
+Next
+For i = 1 To f
+    w(i) = w1(f + 1 - i)
+Next
+
+
+For i = 1 To f
+    wi(i) = w(i) ^ 0.5
+    Ti(i) = 2 * pi / wi(i)
+Next
+
+Dim ts(50) As Double
+
+For i = 1 To f
+    ts(i) = Ti(f + 1 - i)
+Next
+
+For i = 1 To f
+    Cells(2 + f + 3, 2 + i) = w(i)
+    Cells(2 + f + 3, 2) = "ω^2"
+    Cells(2 + f + 4, 2 + i) = wi(i)
+    Cells(2 + f + 4, 2) = "ω:固有円振動数"
+    Cells(2 + f + 5, 2 + i) = Ti(i)
+    Cells(2 + f + 5, 2) = "Ts:固有周期"
+Next
+
+End Sub

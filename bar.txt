@@ -1,0 +1,71 @@
+
+Function bar1(na, o)
+
+    Dim str As String, str1 As String, str2 As String
+
+    
+    str = na
+    str1 = "@"
+    str2 = "-"
+
+        str3 = InStr(str, str1)
+    If str3 > 1 Then
+            ty = 2
+        Else
+            str4 = InStr(str, str2)
+                    If str4 > 1 Then
+                        ty = 1
+                    Else
+                        ty = 0
+                    End If
+        End If
+    
+    If ty = 0 Then
+            yk = na
+            n = 1
+        Else
+            If ty = 1 Then
+                n = Left(str, str4 - 1)
+                yk = Mid(str, str4 + 1)
+            Else
+                If ty = 2 Then
+                    yk = Left(str, str3 - 1)
+                    n = 1000 / Mid(str, str3 + 1)
+                End If
+            End If
+        End If
+
+Select Case yk
+
+    Case "D10"
+    a = 71
+    fi = 30
+    
+    Case "D10D13"
+    a = (71 + 127) / 2
+    fi = (30 + 40) / 2
+    
+    
+    Case "D13"
+    a = 127
+    fi = 40
+    
+    Case "D13D16"
+    a = (127 + 199) / 2
+    fi = (40 + 50) / 2
+    
+    Case "D16"
+    a = 199
+    fi = 50
+
+End Select
+
+    If o = 2 Then
+        bar1 = fi * n
+    Else
+        bar1 = a * n
+    End If
+    
+
+'Cells(54, 22) = bar1
+End Function
