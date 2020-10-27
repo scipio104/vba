@@ -35,78 +35,93 @@ Select Case fai
     Case "D10"
     a = 71
     fi = 30
-    d=11
+    d = 10
+    dm = 11
 
     Case "D10D13"
     a = (71 + 127) / 2
     fi = (30 + 40) / 2
-    d=14
+    dm = 14
 
     Case "D13"
     a = 127
     fi = 40
-    d=14
+    d = 13
+    dm = 14
 
     Case "D13D16"
     a = (127 + 199) / 2
     fi = (40 + 50) / 2
-    d=18
+    dm = 18
 
     Case "D16"
     a = 199
     fi = 50
-    d=18
+    d = 16
+    dm = 18
 
     Case "D16D19"
     a = (199 + 287) / 2
     fi = (60 + 70) / 2
-    d=21
+    dm = 21
 
     Case "D19"
     a = 287
     fi = 60
-    d=21
+    d = 19
+    dm = 21
 
     Case "D22"
     a = 387
     fi = 70
-    d=25
+    d = 22
+    dm = 25
 
     Case "D25"
     a = 507
     fi = 80
-    d=28
+    d = 25
+    dm = 28
 
     Case "D29"
     a = 642
     fi = 90
-    d=33
+    d = 29
+    dm = 33
 
     Case "D32"
     a = 794
     fi = 100
-    d=36
+    d = 32
+    dm = 36
 
     Case "D35"
     a = 957
     fi = 110
-    d=40
+    d = 35
+    dm = 40
 
     Case "D38"
     a = 1140
     fi = 120
-    d=43
+    d = 38
+    dm = 43
 
     Case "D41"
     a = 1340
     fi = 130
+    d = 41
 
 End Select
 
-    If a_f = 1 Then
-        bar_ans = a * num
-    Else
+    If a_f = 2 Then
         bar_ans = fi * num
+    ElseIf a_f = 3 Then
+        bar_ans = d
+    ElseIf a_f = 4 Then
+        bar_ans = dm
+    Else
+        bar_ans = a * num
     End If
 
 bar_1 = bar_ans
