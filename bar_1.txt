@@ -1,0 +1,101 @@
+Function bar_1(use_bar, a_f)
+
+    Dim str As String, str1 As String, str2 As String
+
+    str = use_bar
+    str1 = "@"
+    str2 = "-"
+
+    str3 = InStr(str, str1)
+    str4 = InStr(str, str2)
+        
+    If str3 > 1 Then
+        use_type = 2
+    ElseIf str4 > 1 Then
+        use_type = 1
+    Else
+        use_type = 0
+    End If
+    
+    'bar_min = use_type
+
+    If use_type = 0 Then
+        fai = str
+        num = 1
+    ElseIf use_type = 1 Then
+        num = Left(str, str4 - 1)
+        fai = Mid(str, str4 + 1)
+    Else
+        fai = Left(str, str3 - 1)
+        num = 1000 / Mid(str, str3 + 1)
+    End If
+    
+Select Case fai
+
+    Case "D10"
+    a = 71.4
+    fi = 30
+    
+    Case "D10D13"
+    a = (71 + 127) / 2
+    fi = (30 + 40) / 2
+    
+    Case "D13"
+    a = 127
+    fi = 40
+    
+    Case "D13D16"
+    a = (127 + 199) / 2
+    fi = (40 + 50) / 2
+    
+    Case "D16"
+    a = 199
+    fi = 50
+    
+    Case "D16D19"
+    a = (199 + 287) / 2
+    fi = (60 + 70) / 2
+    
+    Case "D19"
+    a = 287
+    fi = 60
+    
+    Case "D22"
+    a = 387
+    fi = 70
+   
+    Case "D25"
+    a = 507
+    fi = 80
+    
+    Case "D29"
+    a = 642
+    fi = 90
+    
+    Case "D32"
+    a = 794
+    fi = 100
+    
+    Case "D35"
+    a = 957
+    fi = 110
+
+    Case "D38"
+    a = 1140
+    fi = 120
+    
+    Case "D41"
+    a = 1340
+    fi = 130
+     
+End Select
+
+    If a_f = 1 Then
+        bar_ans = a * num
+    Else
+        bar_ans = fi * num
+    End If
+    
+bar_min = bar_ans
+
+End Function
