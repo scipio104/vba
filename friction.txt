@@ -1,0 +1,291 @@
+Sub N_train_friction()
+Dim in_N_val(100) As Single
+Dim temp_N_val(100) As Single
+Dim N_val(100) As Single
+Dim Ave_N(100) As Single
+
+Dim in_train(100) As Single
+Dim temp_train(100) As Single
+Dim train(100) As Single
+
+Dim thin(100) As Single
+    Dim t_Ave_N(100) As Single
+    
+Dim gama(100) As Single
+Dim a As Single
+Dim thk(100) As Single
+    Dim in_weight(100) As Single, unit_weight(100) As Single
+    Dim temp_weight(100) As Single
+    Dim border_text(100) As String
+    
+    Dim in_soil_qt(100) As Single
+    Dim in_soil_q(100) As String
+    Dim soil_q(100) As String
+    Dim temp_soil_q(100) As String
+
+    pile_dai = Cells(4, 2)
+    pile_top = Cells(5, 2)
+    pile_long = Cells(6, 2)
+    
+    pile_tip = pile_top + pile_long
+    
+    pile_dai = pile_dai / 1000
+    
+    up_4d = pile_tip - 4 * pile_dai
+    down_d = pile_dai + pile_tip
+    
+    Cells(8, 2) = up_4d
+    Cells(9, 2) = pile_tip
+    Cells(10, 2) = down_d
+    
+        i = 0
+    Do While Cells(4 + i, 7) <> ""
+        i = i + 1
+        in_train(i) = Cells(3 + i, 6)
+        in_N_val(i) = Cells(3 + i, 7)
+    Loop
+    in_num = i
+
+Cells(18, 1) = in_num
+
+        i = 0
+    Do While Cells(4 + i, 3) <> ""
+        i = i + 1
+        in_soil_qt(i) = Cells(3 + i, 3)
+        in_soil_q(i) = Cells(3 + i, 5)
+    Loop
+        in_soil_num = i
+
+        Cells(12, 2) = in_soil_num
+    For i = 1 To in_soil_num
+        Cells(13 + i, 2) = in_soil_qt(i)
+    Next
+
+
+
+
+'in_soil_qt(i)
+        num = 0
+    For i = 1 To in_soil_num
+        Call p_typ(in_train(), in_soil_qt(i), in_num, typ_num)
+            If typ_num = 1 Then
+                in_num = in_num
+            Else
+                in_num = in_num + 1
+            End If
+            
+Cells(20, 3) = typ_num
+Cells(20, 1) = in_num
+Cells(20, 2) = in_soil_qt(i)
+
+        Call train_go(in_train(), train(), in_N_val(), N_val(), in_soil_qt(i), in_num, typ_num)
+            For j = 1 To in_num
+                in_train(j) = train(j)
+                in_N_val(j) = N_val(j)
+            Next
+    Next
+    
+    
+    For j = 1 To in_num
+        Cells(3 + j, 8) = train(j)
+        Cells(3 + j, 9) = N_val(j)
+    Next
+    For i = 1 To in_num
+        thin(i) = in_train(i) - in_train(i - 1)
+        Ave_N(i) = (in_N_val(i) + in_N_val(i - 1)) / 2
+    Next
+    
+        k = 1
+    For i = 1 To in_soil_num
+        For j = k To in_num
+            If in_train(j) <> in_soil_qt(i) Then
+                soil_q(j) = in_soil_q(i)
+                k = k + 1
+            Else
+                Exit For
+            End If
+        Next
+    Next
+    
+    For j = 1 To in_num
+        Cells(3 + j, 10) = soil_q(j)
+        Cells(3 + j, 11) = thin(j)
+        Cells(3 + j, 12) = Ave_N(j)
+    Next
+      
+      Cells(22, 1) = in_num
+        
+
+End Sub
+
+
+Sub yyyy()
+
+   ' For i = 1 To num
+      '  Cells(3 + i, 8) = train(i)
+      '  Cells(3 + i, 9) = N_val(i)
+      '  temp_train(i) = train(i)
+   '   '  temp_N_val(i) = N_val(i)
+   ' Next
+
+    Call p_typ(temp_train(), down_d, num, typ_n)
+        If typ_num = 1 Then
+            num = num
+        Else
+            num = num + 1
+        End If
+
+    Call train_go(temp_train(), train(), temp_N_val(), N_val(), up_4d, num, typ_n)
+    
+    For i = 1 To num
+        Cells(3 + i, 10) = train(i)
+        Cells(3 + i, 11) = N_val(i)
+        temp_train(i) = train(i)
+        temp_N_val(i) = N_val(i)
+    Next
+    
+    Call p_typ(temp_train(), down_d, num, typ_n)
+        If typ_num = 1 Then
+            num = num
+        Else
+            num = num + 1
+        End If
+    
+    Call train_go(temp_train(), train(), temp_N_val(), N_val(), down_d, num, typ_n)
+        
+    For i = 1 To num
+        Cells(3 + i, 12) = train(i)
+        Cells(3 + i, 13) = N_val(i)
+        thin(i) = train(i) - train(i - 1)
+        Ave_N(i) = (N_val(i) + N_val(i - 1)) / 2
+        t_Ave_N(i) = thin(i) * Ave_N(i)
+        
+        
+        Cells(3 + i, 14) = thin(i)
+        Cells(3 + i, 15) = Ave_N(i)
+        Cells(3 + i, 16) = t_Ave_N(i)
+    Next
+    
+    j = 0
+    Do Until train(j) = up_4d
+        j = j + 1
+            up_num = j
+    Loop
+    j = 0
+    Do Until train(j) = down_d
+        j = j + 1
+            down_num = j
+    Loop
+    
+    For i = 1 To num
+        t_Ave_N(i) = 0
+    Next
+    
+    sum_t_N = 0
+    For i = up_num + 1 To down_num
+        t_Ave_N(i) = thin(i) * Ave_N(i)
+        sum_t_N = sum_t_N + t_Ave_N(i)
+    Next
+    
+    N_L = train(down_num) - train(up_num)
+    N_ = sum_t_N / N_L
+    
+        i = 0
+    For i = 1 To num
+        Cells(3 + i, 17) = t_Ave_N(i)
+    Next
+    
+    
+    Cells(12, 1) = up_num
+    Cells(13, 1) = down_num
+    Cells(14, 1) = N_L
+    Cells(15, 1) = N_
+    
+End Sub
+Sub shapes_clear()
+ActiveSheet.Shapes.SelectAll
+Selection.ShapeRange.Delete
+End Sub
+
+Sub p_typ(ByRef b_train() As Single, wl, layer, typ_n)
+
+    For i = 1 To layer
+        If b_train(i) = wl Then
+            typ_n = 1
+            Exit For
+        Else
+            typ_n = 2
+        End If
+    Next
+    
+End Sub
+
+Sub train_go(ByRef b_train() As Single, ByRef train() As Single, _
+             ByRef in_N_val() As Single, ByRef N_val() As Single, wl, layer, typ_n)
+
+    Select Case typ_n
+        Case 1
+            For i = 1 To layer
+                train(i) = b_train(i)
+                N_val(i) = in_N_val(i)
+            Next
+        Case 2
+            i = 1
+            Do While b_train(i) < wl
+                train(i) = b_train(i)
+                N_val(i) = in_N_val(i)
+                i = i + 1
+            Loop
+                train(i) = wl
+                l1 = train(i) - train(i - 1)
+                L = b_train(i) - b_train(i - 1)
+                nn = in_N_val(i) - in_N_val(i - 1)
+                N_val(i) = nn / L * l1 + in_N_val(i - 1)
+                
+            For j = i + 1 To layer + 1
+                train(j) = b_train(j - 1)
+                N_val(j) = in_N_val(j - 1)
+                
+            Next
+        Case 3
+            For i = 1 To layer
+                train(i) = b_train(i)
+            Next
+    End Select
+End Sub
+
+Sub train_go1(ByRef b_train() As Single, _
+                ByRef w_w() As Single, ByRef uw() As Single, _
+             wl, layer, typ_n)
+
+    Select Case typ_n
+        Case 1
+            For i = 1 To layer
+                If b_train(i) <= wl Then
+                    uw(i) = w_w(i)
+                Else
+                    uw(i) = w_w(i) - 10
+                End If
+            Next
+        Case 2
+            i = 1
+            Do While b_train(i) < wl
+                uw(i) = w_w(i)
+                i = i + 1
+            Loop
+                uw(i) = w_w(i)
+            For j = i + 1 To layer + 1
+                uw(j) = w_w(j - 1) - 10
+            Next
+        Case 3
+            For i = 1 To layer
+                uw(i) = w_w(i)
+            Next
+    End Select
+End Sub
+
+
+
+
+
+
